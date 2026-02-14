@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Alex
+  m_EditorClassIdentifier: Assembly-CSharp::TinderCharacterData
+  characterId: alex
+  realInfo:
+    displayName: Alex
+    age: 21
+    location: Pelican Town
+    address: 1 River Road
+    birthday: Summer 13
+    bio: Future pro athelete. Hanging on the beach right now.
+    prompt1Title: "The one thing you should know about me is\u2026"
+    prompt1Answer: I am going the be a professional athlete.
+    prompt2Title: "My ideal Sunday\u2026"
+    prompt2Answer: At the beach, playing sport
+    interests:
+    - Complete Breakfast
+    - Salmon Dinner
+    - Dinosaur Egg
+    photos:
+    - {fileID: 7037080424480043795, guid: e768b83e862eb5043b9dc1e63b03b793, type: 3}
+    - {fileID: 5134539684181775235, guid: 6f53a97f6f4f6df45ac7cc1d801ecd01, type: 3}
+    - {fileID: -6313167717380618459, guid: f9ccfc8b559602042aa1a7e375c7d7b9, type: 3}
+    - {fileID: -7869815054355777422, guid: dc72f793ff3c3a64c91a39506117dfc3, type: 3}
+  fakeInfos:
+  - displayName: Alex
+    age: 24
+    location: Pelican Town
+    address: 2 Willow Lane
+    birthday: Summer 13
+    bio: Future pro athelete. Hanging on the beach right now.
+    prompt1Title: "My real-life superpower\u2026"
+    prompt1Answer: My talents in sports.
+    prompt2Title: "A random fact about me\u2026"
+    prompt2Answer: I'm still living with my parents.
+    interests:
+    - Salmon Dinner
+    - Jack be Nimble, Jack be Thick
+    - Frog Egg
+    photos:
+    - {fileID: 7037080424480043795, guid: e768b83e862eb5043b9dc1e63b03b793, type: 3}
+    - {fileID: 5134539684181775235, guid: 6f53a97f6f4f6df45ac7cc1d801ecd01, type: 3}
+    - {fileID: -6313167717380618459, guid: f9ccfc8b559602042aa1a7e375c7d7b9, type: 3}
+    - {fileID: -7869815054355777422, guid: dc72f793ff3c3a64c91a39506117dfc3, type: 3}
+  - displayName: Alex
+    age: 21
+    location: Pelican Town
+    address: Marnie's Ranch
+    birthday: Summer 5
+    bio: Future pro athelete. Hanging on the beach right now.
+    prompt1Title: My biggest supporter is...
+    prompt1Answer: My dog Dusty.
+    prompt2Title: "My green flag\u2026"
+    prompt2Answer: I'm quite humble.
+    interests:
+    - Salmon Dinner
+    - Holly
+    - Frog Egg
+    photos:
+    - {fileID: 7037080424480043795, guid: e768b83e862eb5043b9dc1e63b03b793, type: 3}
+    - {fileID: 5134539684181775235, guid: 6f53a97f6f4f6df45ac7cc1d801ecd01, type: 3}
+    - {fileID: -6313167717380618459, guid: f9ccfc8b559602042aa1a7e375c7d7b9, type: 3}
+    - {fileID: -7869815054355777422, guid: dc72f793ff3c3a64c91a39506117dfc3, type: 3}
+  - displayName: Alex
+    age: 19
+    location: Cindersap Forest
+    address: 1 River Road
+    birthday: Summer 13
+    bio: Future pro athelete. Hanging on the beach right now.
+    prompt1Title: "Don\u2019t hate me if I\u2026"
+    prompt1Answer: Marry Haley if we are both single at 30.
+    prompt2Title: "My biggest flex\u2026"
+    prompt2Answer: Is my sexy muscles.
+    interests:
+    - Wild Horseradish
+    - Holly
+    - Frog Egg
+    photos:
+    - {fileID: 7037080424480043795, guid: e768b83e862eb5043b9dc1e63b03b793, type: 3}
+    - {fileID: 5134539684181775235, guid: 6f53a97f6f4f6df45ac7cc1d801ecd01, type: 3}
+    - {fileID: -6313167717380618459, guid: f9ccfc8b559602042aa1a7e375c7d7b9, type: 3}
+    - {fileID: -7869815054355777422, guid: dc72f793ff3c3a64c91a39506117dfc3, type: 3}
+  runtimeType: 1
+  runtimeFakeIndex: 1

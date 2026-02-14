@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Abigail
+  m_EditorClassIdentifier: Assembly-CSharp::TinderCharacterData
+  characterId: abigail
+  realInfo:
+    displayName: Abigail
+    age: 19
+    location: Pelican Town
+    address: Pierre's General Store
+    birthday: Fall 13
+    prompt1Title: "My weirdest habit\u2026"
+    prompt1Answer: is looking for frogs in a rainstorm.
+    prompt2Title: My favorite color is...
+    prompt2Answer: purple.
+    interests:
+    - Banana Puding
+    - Pufferfish
+    - Spicy Eel
+    photos:
+    - {fileID: 6353918698758190678, guid: 9ac56a2854d84ee4d91d296294654116, type: 3}
+    - {fileID: -6411565332775745269, guid: 8093838e45ab3eb4f8b413b3c678fe49, type: 3}
+    - {fileID: 99702822343432232, guid: a099d04bb4ab1e046883f1ae00830afb, type: 3}
+  fakeInfos:
+  - displayName: Abigail
+    age: 22
+    location: Pelican Town
+    address: Medical Clinic
+    birthday: Fall 13
+    prompt1Title: The most annoying thing in my life...
+    prompt1Answer: is my mom.
+    prompt2Title: My precious pet is a...
+    prompt2Answer: cat named Clay.
+    interests:
+    - Amethyst
+    - Banana Pudding
+    - Sugar
+    photos:
+    - {fileID: 6353918698758190678, guid: 9ac56a2854d84ee4d91d296294654116, type: 3}
+    - {fileID: -6411565332775745269, guid: 8093838e45ab3eb4f8b413b3c678fe49, type: 3}
+    - {fileID: 99702822343432232, guid: a099d04bb4ab1e046883f1ae00830afb, type: 3}
+  - displayName: Abigail
+    age: 20
+    location: Pelican Town
+    address: Pierre's General Store
+    birthday: Fall 3
+    prompt1Title: "If I disappear for 3 days, I\u2019m probably\u2026"
+    prompt1Answer: I'm probably in a dungeon with Sam and Sebastian.
+    prompt2Title: My favorite video game is...
+    prompt2Answer: Journey of the Prairie King
+    interests:
+    - Purple Mushroom
+    - Banana Pudding
+    - Quartz
+    photos:
+    - {fileID: 6353918698758190678, guid: 9ac56a2854d84ee4d91d296294654116, type: 3}
+    - {fileID: -6411565332775745269, guid: 8093838e45ab3eb4f8b413b3c678fe49, type: 3}
+    - {fileID: 99702822343432232, guid: a099d04bb4ab1e046883f1ae00830afb, type: 3}
+  - displayName: Abigail
+    age: 19
+    location: Ginger Island
+    address: Pierre's General Store
+    birthday: Winter 3
+    prompt1Title: "My most irrational purchase\u2026"
+    prompt1Answer: is a sword that I could use in a dungeon.
+    prompt2Title: My favorite season is...
+    prompt2Answer: summer.
+    interests:
+    - Purple Mushroom
+    - Banana Pudding
+    - Quartz
+    photos:
+    - {fileID: 99702822343432232, guid: a099d04bb4ab1e046883f1ae00830afb, type: 3}
+  runtimeType: 1
+  runtimeFakeIndex: 0
