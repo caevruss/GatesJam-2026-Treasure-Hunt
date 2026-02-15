@@ -1,15 +1,22 @@
-// TinderInputBridge.cs
-// UI butonlarına bağla: "Swipe Left (Real)" ve "Swipe Right (Fake)"
+// TinderInputBridge.cs (UPDATED)
+// - Left/Right buttons call these during Playing
+// - Start button calls StartGame()
+// - Replay button calls Replay()
+
 using UnityEngine;
 
 public class TinderInputBridge : MonoBehaviour
 {
     [SerializeField] private TinderRoundManager round;
 
+    public void StartGame()
+    {
+        if (round) round.StartGame();
+    }
+
     public void SwipeLeft_Real()
     {
         if (round) round.SubmitSwipe(TinderRoundManager.SwipeDecision.Left_Real);
-        Debug.Log("a");
     }
 
     public void SwipeRight_Fake()
@@ -17,13 +24,8 @@ public class TinderInputBridge : MonoBehaviour
         if (round) round.SubmitSwipe(TinderRoundManager.SwipeDecision.Right_Fake);
     }
 
-    public void Retry()
+    public void Replay()
     {
-        if (round) round.RetryRound();
-    }
-
-    public void NewRound()
-    {
-        if (round) round.StartNewRound();
+        if (round) round.Replay();
     }
 }

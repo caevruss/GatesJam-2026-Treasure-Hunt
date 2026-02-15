@@ -1,7 +1,7 @@
-// TinderRoundManager.cs
-// Deck kurar: havuzdan 8 karakter seçer, her birine runtime Fake/Real atar (Fake ise fake variant seçer)
-// Oyuncu swipe yapar: Right = Fake, Left = Real
-// Hata olursa retry: yeni 8 seçer + yeniden fake/real dağıtır
+// TinderRoundManager.cs (UPDATED)
+// - Intro state (waits for StartGame())
+// - Play state (player swipes through ALL cards; no instant fail)
+// - Results state (shows "X/Y correct" and enables Replay)
 
 using System;
 using System.Collections.Generic;
@@ -9,44 +9,45 @@ using UnityEngine;
 
 public class TinderRoundManager : MonoBehaviour
 {
-    [Header("Pool (12 adet TinderCharacterData buraya)")]
-    [SerializeField] private List<TinderCharacterData> characterPool = new List<TinderCharacterData>();
+    public enum State { Intro, Playing, Results }
+    public enum SwipeDecision { Left_Real, Right_Fake }
 
-    [Header("Round Settings")]
-    [SerializeField] private TinderRoundSettings settings = new TinderRoundSettings();
+    [Serializable]
+    public class RoundSettings
+    {
+        [Range(1, 32)] public int pickCount = 8;
+        [Range(0, 32)] public int fakeCount = 3; // deck içinden kaç fake olsun
+        public int seed = 0; // 0=random
+    }
+
+    [Header("Pool (12+ TinderCharacterData)")]
+    [SerializeField] private List<TinderCharacterData> characterPool = new();
+
+    [Header("Settings")]
+    [SerializeField] private RoundSettings settings = new();
 
     [Header("Debug")]
     [SerializeField] private bool logRoundSetup = false;
 
-    // Active deck
-    private readonly List<TinderCharacterData> _activeDeck = new();
-    private int _deckIndex = 0;
-
-    // Progress
-    private int _mistakes = 0;
-
-    // RNG
-    private System.Random _rng;
-
     // Events (UI bağlamak için)
-    public event Action<TinderCharacterData, TinderProfileInfo, int, int> OnCardShown; 
-    // (data, activeInfo, index(0..n-1), total)
+    public event Action<State> OnStateChanged;
+    public event Action<TinderCharacterData, TinderProfileInfo, int, int> OnCardShown; // data, info, index, total
+    public event Action<int, int> OnResults; // correct, total
 
-    public event Action OnRoundWon;
-    public event Action<int> OnRoundFailed; // mistakes count
+    public State CurrentState { get; private set; } = State.Intro;
 
-    public IReadOnlyList<TinderCharacterData> ActiveDeck => _activeDeck;
-    public int DeckIndex => _deckIndex;
-    public int Mistakes => _mistakes;
+    private readonly List<TinderCharacterData> _deck = new();
+    private int _index = 0;
+
+    private int _correct = 0;
+    private int _total = 0;
+
+    private System.Random _rng;
 
     private void Awake()
     {
         InitRng();
-    }
-
-    private void Start()
-    {
-        StartNewRound();
+        SetState(State.Intro);
     }
 
     private void InitRng()
@@ -55,61 +56,83 @@ public class TinderRoundManager : MonoBehaviour
         _rng = new System.Random(seed);
     }
 
-    // ---------------------------
-    // Public API
-    // ---------------------------
+    // ---------- Public API (UI calls these) ----------
 
-    public void StartNewRound()
+    public void StartGame()
     {
         BuildDeck();
-        _deckIndex = 0;
-        _mistakes = 0;
+        _index = 0;
+        _correct = 0;
+        _total = _deck.Count;
 
+        SetState(State.Playing);
         ShowCurrentCard();
     }
 
-    public void RetryRound()
+    public void Replay()
     {
-        StartNewRound();
+        // Yeni tur: yeni 8 seç + yeni fake dağıt + fake variant random
+        StartGame();
     }
 
     public void SubmitSwipe(SwipeDecision decision)
     {
-        if (_activeDeck.Count == 0) return;
-        if (_deckIndex < 0 || _deckIndex >= _activeDeck.Count) return;
+        if (CurrentState != State.Playing) return;
+        if (_deck.Count == 0) return;
+        if (_index < 0 || _index >= _deck.Count) return;
 
-        var current = _activeDeck[_deckIndex];
+        var current = _deck[_index];
+        if (!current) { Advance(); return; }
 
-        bool playerSaysFake = decision == SwipeDecision.Right_Fake;
-        bool isActuallyFake = current.IsFakeRuntime();
+        bool playerSaysFake = (decision == SwipeDecision.Right_Fake);
+        bool actuallyFake = current.IsFakeRuntime();
 
-        if (playerSaysFake != isActuallyFake)
+        if (playerSaysFake == actuallyFake)
+            _correct++;
+
+        Advance();
+    }
+
+    // ---------- Core ----------
+
+    private void Advance()
+    {
+        _index++;
+
+        if (_index >= _deck.Count)
         {
-            _mistakes++;
-            // Anında fail istiyorsan burada bitir:
-            FailRound();
-            return;
-        }
-
-        // doğruysa sıradaki karta geç
-        _deckIndex++;
-
-        if (_deckIndex >= _activeDeck.Count)
-        {
-            WinRound();
+            SetState(State.Results);
+            OnResults?.Invoke(_correct, _total);
             return;
         }
 
         ShowCurrentCard();
     }
 
-    // ---------------------------
-    // Core
-    // ---------------------------
+    private void ShowCurrentCard()
+    {
+        if (_index < 0 || _index >= _deck.Count) return;
+
+        var data = _deck[_index];
+        if (!data)
+        {
+            Advance();
+            return;
+        }
+
+        var info = data.GetActiveInfo();
+        OnCardShown?.Invoke(data, info, _index, _deck.Count);
+    }
+
+    private void SetState(State s)
+    {
+        CurrentState = s;
+        OnStateChanged?.Invoke(s);
+    }
 
     private void BuildDeck()
     {
-        _activeDeck.Clear();
+        _deck.Clear();
 
         if (characterPool == null || characterPool.Count == 0)
         {
@@ -120,109 +143,47 @@ public class TinderRoundManager : MonoBehaviour
         int pickCount = Mathf.Clamp(settings.pickCount, 1, characterPool.Count);
         int fakeCount = Mathf.Clamp(settings.fakeCount, 0, pickCount);
 
-        // 1) Havuzdan pickCount tane seç
+        // 1) pickCount kadar karakter seç
         var poolCopy = new List<TinderCharacterData>(characterPool);
-
         Shuffle(poolCopy);
 
-        if (!settings.allowSameCharacterAgainOnRetry && _lastRoundIds.Count > 0)
+        for (int i = 0; i < pickCount; i++)
         {
-            // Basitçe: önce yeni olanları al, yetmezse kalanlardan tamamla
-            var fresh = new List<TinderCharacterData>();
-            var old = new List<TinderCharacterData>();
-
-            foreach (var c in poolCopy)
-            {
-                if (c == null) continue;
-                if (_lastRoundIds.Contains(c.characterId)) old.Add(c);
-                else fresh.Add(c);
-            }
-
-            _activeDeck.AddRange(fresh);
-            if (_activeDeck.Count < pickCount) _activeDeck.AddRange(old);
-
-            if (_activeDeck.Count > pickCount) _activeDeck.RemoveRange(pickCount, _activeDeck.Count - pickCount);
-        }
-        else
-        {
-            for (int i = 0; i < pickCount; i++)
-            {
-                if (poolCopy[i] != null) _activeDeck.Add(poolCopy[i]);
-            }
+            if (poolCopy[i] != null) _deck.Add(poolCopy[i]);
         }
 
-        // 2) Fake/Real dağıt (tam fakeCount fake olacak şekilde)
-        // Önce tümünü Real yap
-        foreach (var c in _activeDeck)
+        // 2) hepsini Real yap
+        foreach (var c in _deck)
         {
             if (!c) continue;
             c.SetRuntime(TinderAccountType.Real, 0);
         }
 
-        // Sonra rastgele fakeCount tanesini Fake yap
-        var indices = new List<int>();
-        for (int i = 0; i < _activeDeck.Count; i++) indices.Add(i);
-        Shuffle(indices);
-
-        for (int i = 0; i < fakeCount; i++)
+        // 3) sadece fake variantı olanlardan fake ata (çok kritik!)
+        var fakeCandidates = new List<int>();
+        for (int i = 0; i < _deck.Count; i++)
         {
-            int idx = indices[i];
-            var c = _activeDeck[idx];
-            if (!c) continue;
+            var c = _deck[i];
+            if (c != null && c.FakeVariantCount > 0)
+                fakeCandidates.Add(i);
+        }
+        Shuffle(fakeCandidates);
 
-            int variant = 0;
-            int variantCount = c.FakeVariantCount;
-            if (variantCount > 0) variant = _rng.Next(0, variantCount);
+        int assignCount = Mathf.Min(fakeCount, fakeCandidates.Count);
+        for (int i = 0; i < assignCount; i++)
+        {
+            int deckIdx = fakeCandidates[i];
+            var c = _deck[deckIdx];
 
+            int variant = _rng.Next(0, c.FakeVariantCount);
             c.SetRuntime(TinderAccountType.Fake, variant);
         }
 
-        // 3) Deck’i karıştır (fake/real dağıtımı sıraya bağlı olmasın)
-        Shuffle(_activeDeck);
+        // 4) sırayı karıştır
+        Shuffle(_deck);
 
-        // Retry tekrarını takip
-        _lastRoundIds.Clear();
-        foreach (var c in _activeDeck)
-            if (c) _lastRoundIds.Add(c.characterId);
-
-        if (logRoundSetup)
-            DebugLogDeck();
+        if (logRoundSetup) DebugLogDeck(assignCount);
     }
-
-    private void ShowCurrentCard()
-    {
-        if (_activeDeck.Count == 0) return;
-        if (_deckIndex < 0 || _deckIndex >= _activeDeck.Count) return;
-
-        var data = _activeDeck[_deckIndex];
-        if (!data)
-        {
-            // null çıkarsa geç
-            _deckIndex++;
-            if (_deckIndex >= _activeDeck.Count) { WinRound(); return; }
-            ShowCurrentCard();
-            return;
-        }
-
-        var info = data.GetActiveInfo();
-        OnCardShown?.Invoke(data, info, _deckIndex, _activeDeck.Count);
-    }
-
-    private void WinRound()
-    {
-        OnRoundWon?.Invoke();
-    }
-
-    private void FailRound()
-    {
-        OnRoundFailed?.Invoke(_mistakes);
-    }
-
-    // ---------------------------
-    // Helpers
-    // ---------------------------
-
-    private readonly HashSet<string> _lastRoundIds = new();
 
     private void Shuffle<T>(IList<T> list)
     {
@@ -233,36 +194,14 @@ public class TinderRoundManager : MonoBehaviour
         }
     }
 
-    private void DebugLogDeck()
+    private void DebugLogDeck(int assignedFake)
     {
-        Debug.Log($"[TinderRoundManager] Deck built. Total={_activeDeck.Count} (Fake={settings.fakeCount})");
-        for (int i = 0; i < _activeDeck.Count; i++)
+        Debug.Log($"[TinderRoundManager] Deck built. Total={_deck.Count} AssignedFake={assignedFake}");
+        for (int i = 0; i < _deck.Count; i++)
         {
-            var c = _activeDeck[i];
+            var c = _deck[i];
             if (!c) continue;
-            var type = c.IsFakeRuntime() ? "FAKE" : "REAL";
-            Debug.Log($"  #{i} {c.characterId} -> {type} (variant={GetRuntimeVariantDebug(c)})");
+            Debug.Log($"  #{i} {c.characterId} -> {(c.IsFakeRuntime() ? "FAKE" : "REAL")} (fakeVariants={c.FakeVariantCount})");
         }
-    }
-
-    private int GetRuntimeVariantDebug(TinderCharacterData c)
-    {
-        // runtimeFakeIndex private; debug amaçlı activeInfo indexini dışarıdan bilmiyoruz.
-        // İstersen TinderCharacterData içine RuntimeFakeIndex read-only property ekleyebilirsin.
-        return c.IsFakeRuntime() ? 1 : 0;
-    }
-    public enum SwipeDecision
-    {
-        Left_Real,   // Player says: this profile is REAL
-        Right_Fake   // Player says: this profile is FAKE
-    }
-
-    [Serializable]
-    public class TinderRoundSettings
-    {
-        [Range(1, 32)] public int pickCount = 8;
-        [Range(0, 32)] public int fakeCount = 3; // 8 içinden kaç fake olsun
-        public bool allowSameCharacterAgainOnRetry = true;
-        public int seed = 0; // 0 = random seed, >0 = deterministic
     }
 }
