@@ -4,11 +4,9 @@ using UnityEngine;
 public class HarpString2D : MonoBehaviour
 {
     [SerializeField] private HarpSound harpSound;
-    [SerializeField] private int midiNote = 60;
+    [SerializeField] private MelodyChecker melodyChecker;
+    [SerializeField] private int midiNote = 60; // bu telin notası (C4)
     [Range(0f, 1f)] [SerializeField] private float volume = 1f;
-
-    private HarpStageManager manager;
-    private int myStringIndex;
 
     private void Reset()
     {
@@ -19,14 +17,12 @@ public class HarpString2D : MonoBehaviour
     private void OnMouseDown()
     {
         if (harpSound) harpSound.PlayMidi(midiNote, volume);
-        if (manager) manager.RegisterStringHit(myStringIndex);
+        if (melodyChecker) melodyChecker.RegisterNote(midiNote);
     }
-
-    public void SetMidi(int newMidi) => midiNote = newMidi;
-
-    public void SetManagerAndIndex(HarpStageManager m, int index)
+    
+    public void Configure(HarpSound sound, int newMidiNote)
     {
-        manager = m;
-        myStringIndex = index;
+        harpSound = sound;
+        midiNote = newMidiNote;
     }
 }
