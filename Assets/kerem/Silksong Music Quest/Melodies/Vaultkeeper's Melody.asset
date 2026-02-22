@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f62c247e71230547a2dfeecd1e47bad, type: 3}
+  m_Name: Vaultkeeper's Melody
+  m_EditorClassIdentifier: 
+  stringMidi: 3f0000004100000043000000440000004600000048000000
+  targetStringSequence: 0200000004000000030000000100000000000000010000000200000005000000
+  stageCompleteClip: {fileID: 8300000, guid: 7c23e504f7c769f43875f3f6046971ab, type: 3}
