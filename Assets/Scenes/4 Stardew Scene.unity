@@ -186,9 +186,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 314f38c79f73847448af00c3f5832194, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterPool:
-  - {fileID: 11400000, guid: 3aa52c444c3d8c54eaf2458f400779d6, type: 2}
-  - {fileID: 11400000, guid: 2eab2ff47c9c76b488aaa7efd9d4f4c1, type: 2}
+  characterPool: []
   settings:
     pickCount: 2
     fakeCount: 1
