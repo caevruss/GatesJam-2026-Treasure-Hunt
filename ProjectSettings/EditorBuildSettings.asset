@@ -5,9 +5,24 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/1 Celeste Scene.unity
+    guid: 764d04efacca66c45af57ed92edb99c8
+  - enabled: 1
+    path: Assets/Scenes/2 Silksong Scene.unity
+    guid: ba176f4850a6d604eb962d843291cc22
+  - enabled: 1
+    path: Assets/Scenes/3 Isaac Scene.unity
+    guid: a2b566eb6cb9099abbd5487448306b3b
+  - enabled: 1
+    path: Assets/Scenes/4 Stardew Scene.unity
+    guid: 15b52dd9693a73f4395d3dbf41d5beef
+  - enabled: 1
+    path: Assets/Scenes/5 Dead Cells Scene.unity
+    guid: 9586c53ad5ae54f1dbf6b7d9261a5dc1
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
